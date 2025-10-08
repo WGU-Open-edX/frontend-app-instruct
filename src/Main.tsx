@@ -1,20 +1,19 @@
-import { CurrentAppProvider } from '@openedx/frontend-base';
-
+import { CurrentAppProvider, getAppConfig } from '@openedx/frontend-base';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { appId } from './constants';
 
 import './main.scss';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Outlet } from 'react-router-dom';
-
-const queryClient = new QueryClient();
+import PageWrapper from './pageWrapper/PageWrapper';
 
 const Main = () => (
   <CurrentAppProvider appId={appId}>
-    <QueryClientProvider client={queryClient}>
-      <main>
+    <main className="d-flex flex-column flex-grow-1">
+      <PageWrapper>
         <Outlet />
-      </main>
-    </QueryClientProvider>
+      </PageWrapper>
+    </main>
+    { getAppConfig(appId).NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} /> }
   </CurrentAppProvider>
 );
 
