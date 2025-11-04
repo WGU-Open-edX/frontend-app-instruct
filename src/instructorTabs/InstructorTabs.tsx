@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Tabs } from '@openedx/paragon';
 import { Slot } from '@openedx/frontend-base';
+import SlotTabs from '../slots/instructorTabsSlot/SlotTabs';
 
 enum InstructorTabKeys {
   COURSE_INFO = 'courseInfo',
@@ -63,9 +64,9 @@ const InstructorTabs = () => {
   };
 
   return (
-    <Tabs id="instructor-tabs" activeKey={tabKey} onSelect={handleSelect}>
-      <Slot id="org.openedx.frontend.slot.instructor.tabs.tab.v1" />
-    </Tabs>
+    <div id="instructor-tabs" >
+      <SlotTabs id="org.openedx.frontend.slot.instructor.tabs.tab.v1" />
+    </div>
   );
 };
 

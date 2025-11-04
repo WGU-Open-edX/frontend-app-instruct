@@ -1,5 +1,5 @@
 import { Slot } from '@openedx/frontend-base';
-import { InstructorTabs } from '../../instructorTabs';
+import InstructorTabs from '../../instructorTabs/InstructorTabs';
 
 export const InstructorTabsSlot = () => (
   <Slot
