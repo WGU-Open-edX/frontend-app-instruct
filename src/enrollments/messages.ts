@@ -170,7 +170,17 @@ const messages = defineMessages({
     id: 'instruct.enrollments.modals.unenrollingButton',
     defaultMessage: 'Unenrolling...',
     description: 'Label for unenroll button when processing',
-  }
+  },
+  addBetaTestersInstructions: {
+    id: 'instruct.enrollments.modals.addBetaTesters.addBetaTestersInstructions',
+    defaultMessage: 'Enter email addresses and/or usernames separated by new lines or commas. Note: Users must have an activated My Open edX account before they can be enrolled as beta testers.',
+    description: 'Instructions for adding beta testers to the course',
+  },
+  uploadCSV: {
+    id: 'instruct.enrollments.modals.uploadCSV',
+    defaultMessage: 'Upload CSV',
+    description: 'Title for upload CSV tab in add modal',
+  },
 });
 
 export default messages;
