@@ -191,6 +191,21 @@ const messages = defineMessages({
     defaultMessage: 'Save',
     description: 'Label for save button when adding users to course team',
   },
+  editTeamTitle: {
+    id: 'instruct.courseTeam.editTeamTitle',
+    defaultMessage: 'Edit {username} Roles',
+    description: 'Title for edit team member modal',
+  },
+  editInstructions: {
+    id: 'instruct.courseTeam.editInstructions',
+    defaultMessage: 'Uncheck to remove role from {username}',
+    description: 'Instructions for editing a team member',
+  },
+  addRole: {
+    id: 'instruct.courseTeam.addRole',
+    defaultMessage: 'Add role',
+    description: 'Label for adding a role to a team member',
+  },
 });
 
 export default messages;

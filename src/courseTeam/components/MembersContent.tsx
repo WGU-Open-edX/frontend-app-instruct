@@ -4,10 +4,15 @@ import { useIntl } from '@openedx/frontend-base';
 import { Button, DataTable } from '@openedx/paragon';
 import messages from '../messages';
 import { useTeamMembers } from '../data/apiHook';
+import { CourseTeamMember } from '../types';
 
 const TEAM_MEMBERS_PAGE_SIZE = 25;
 
-const MembersContent = () => {
+interface MembersContentProps {
+  onEdit: (user: CourseTeamMember) => void,
+}
+
+const MembersContent = ({ onEdit }: MembersContentProps) => {
   const intl = useIntl();
   const { courseId = '' } = useParams<{ courseId: string }>();
   const [filters, setFilters] = useState({ page: 0, emailOrUsername: '', role: '' });
@@ -16,18 +21,18 @@ const MembersContent = () => {
   const tableColumns = useMemo(() => [
     { accessor: 'username', Header: intl.formatMessage(messages.username) },
     { accessor: 'email', Header: intl.formatMessage(messages.email) },
-    { accessor: 'role', Header: intl.formatMessage(messages.role) },
+    { accessor: 'roles', Header: intl.formatMessage(messages.role), Cell: ({ cell: { value } }: { cell: { value: string[] } }) => value.join(', ') },
   ], [intl]);
 
   const additionalColumns = useMemo(() => [{
     id: 'actions',
     Header: intl.formatMessage(messages.actions),
-    Cell: () => (
-      <Button variant="link" size="inline">
+    Cell: ({ row }: { row: { original: any } }) => (
+      <Button variant="link" size="inline" onClick={() => onEdit(row.original)}>
         {intl.formatMessage(messages.edit)}
       </Button>
     )
-  }], [intl]);
+  }], [intl, onEdit]);
 
   const handleFetchData = useCallback(({ pageIndex, filters: tableFilters }: { pageIndex: number, filters: { id: string, value: string }[] }) => {
     // Filters will be handled in a future iteration, for now we will just update pagination

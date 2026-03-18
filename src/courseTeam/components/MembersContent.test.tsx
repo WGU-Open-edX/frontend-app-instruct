@@ -17,11 +17,13 @@ jest.mock('react-router-dom', () => ({
 }));
 
 const mockTeamMembers = [
-  { username: 'user1', email: 'user1@example.com', role: 'Admin' },
-  { username: 'user2', email: 'user2@example.com', role: 'Staff' },
+  { username: 'user1', fullName: 'User One', email: 'user1@example.com', roles: ['Admin'] },
+  { username: 'user2', fullName: 'User Two', email: 'user2@example.com', roles: ['Staff'] },
 ];
 
-const renderComponent = () => renderWithIntl(<MembersContent />);
+const mockOnEdit = jest.fn();
+
+const renderComponent = () => renderWithIntl(<MembersContent onEdit={mockOnEdit} />);
 
 describe('MembersContent', () => {
   beforeEach(() => {
@@ -48,10 +50,10 @@ describe('MembersContent', () => {
 
     expect(screen.getByText(mockTeamMembers[0].username)).toBeInTheDocument();
     expect(screen.getByText(mockTeamMembers[0].email)).toBeInTheDocument();
-    expect(screen.getByText(mockTeamMembers[0].role)).toBeInTheDocument();
+    expect(screen.getByText(mockTeamMembers[0].roles.join(', '))).toBeInTheDocument();
     expect(screen.getByText(mockTeamMembers[1].username)).toBeInTheDocument();
     expect(screen.getByText(mockTeamMembers[1].email)).toBeInTheDocument();
-    expect(screen.getByText(mockTeamMembers[1].role)).toBeInTheDocument();
+    expect(screen.getByText(mockTeamMembers[1].roles.join(', '))).toBeInTheDocument();
   });
 
   it('renders empty state when no team members', () => {

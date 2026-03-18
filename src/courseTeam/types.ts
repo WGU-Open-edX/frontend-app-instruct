@@ -1,7 +1,8 @@
 export interface CourseTeamMember {
   username: string,
+  fullName: string,
   email: string,
-  role: string,
+  roles: string[],
 };
 
 export interface CourseTeamMemberQueryParams {

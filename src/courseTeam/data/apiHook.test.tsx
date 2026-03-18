@@ -35,8 +35,8 @@ describe('apiHook', () => {
         count: 2,
         numPages: 1,
         results: [
-          { username: 'john.doe', email: 'john@example.com', role: 'instructor' },
-          { username: 'jane.smith', email: 'jane@example.com', role: 'staff' },
+          { username: 'john.doe', fullName: 'John Doe', email: 'john@example.com', roles: ['instructor'] },
+          { username: 'jane.smith', fullName: 'Jane Smith', email: 'jane@example.com', roles: ['staff', 'admin'] },
         ],
       };
 
