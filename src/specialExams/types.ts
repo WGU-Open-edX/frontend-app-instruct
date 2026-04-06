@@ -13,3 +13,17 @@ export interface Attempt {
 export interface AttemptsParams extends PaginationParams {
   emailOrUsername: string,
 }
+
+export interface Allowance {
+  username: string,
+  email: string,
+  examName: string,
+  allowanceType: string,
+  allowanceValue: string,
+  examType: string,
+}
+
+export interface AddAllowanceParams extends Omit<Allowance, 'username' | 'email' | 'examName'> {
+  emailOrUsername: string,
+  exams: string[],
+}
