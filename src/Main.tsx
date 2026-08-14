@@ -4,18 +4,19 @@ import { Outlet } from 'react-router-dom';
 import { AlertProvider } from './providers/AlertProvider';
 import { AccessErrorProvider } from './providers/AccessErrorProvider';
 import { appId } from './constants';
-import messages from './messages';
+import { useDashboardConfig } from './dashboardConfig/DashboardConfigContext';
 import PageWrapper from './pageWrapper/PageWrapper';
 
 import './style.scss';
 
 const Main = () => {
   const { formatMessage } = useIntl();
+  const { titleMessage } = useDashboardConfig();
   return (
     <CurrentAppProvider appId={appId}>
       <Helmet>
         <title>
-          {formatMessage(messages['instructor-dashboard.page.title'], {
+          {formatMessage(titleMessage, {
             siteName: getSiteConfig().siteName,
           })}
         </title>

@@ -3,6 +3,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderWithIntl } from '@src/testUtils';
 import Main from './Main';
+import { DashboardConfigProvider } from './dashboardConfig/DashboardConfigContext';
+import { instructorDashboardConfig } from './dashboardConfig/configs';
 
 jest.mock('./pageWrapper/PageWrapper', () => ({
   __esModule: true,
@@ -21,7 +23,9 @@ describe('Main', () => {
     return renderWithIntl(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <Main />
+          <DashboardConfigProvider value={instructorDashboardConfig}>
+            <Main />
+          </DashboardConfigProvider>
         </BrowserRouter>
       </QueryClientProvider>
     );

@@ -6,3 +6,10 @@ export const instructorDashboardRole = 'org.openedx.frontend.role.instructorDash
 // site.config to change which buttons appear and who may use them.
 export const enrollmentActionsSlotId = 'org.openedx.frontend.slot.instructorDashboard.enrollmentActions.v1';
 export const enrollmentActionsWidgetId = 'org.openedx.frontend.widget.instructorDashboard.enrollmentActions.default';
+
+// Slot Ids for the instructor dashboard and CCX coach dashboard routes and nav tabs.
+// These slots are used to allow operators to add additional routes or tabs to the dashboards.
+export const instructorDashboardRoutesSlotId = 'org.openedx.frontend.slot.instructorDashboard.routes.v1';
+export const instructorDashboardTabsSlotId = 'org.openedx.frontend.slot.instructorDashboard.tabs.v1';
+export const ccxCoachRoutesSlotId = 'org.openedx.frontend.slot.ccxCoach.routes.v1';
+export const ccxCoachTabsSlotId = 'org.openedx.frontend.slot.ccxCoach.tabs.v1';

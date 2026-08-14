@@ -1,19 +1,18 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useCourseInfo } from '@src/data/apiHook';
+import { useDashboardConfig } from '@src/dashboardConfig/DashboardConfigContext';
 import { isForbiddenError, isUnauthorizedError } from '@src/data/utils';
 import { useAccessError } from '@src/providers/AccessErrorProvider';
 
 /**
- * Observes the courseInfo query and syncs 401/403 errors with the AccessErrorProvider.
- * This component must be rendered inside AccessErrorProvider.
- * By keeping this logic here (instead of inside useCourseInfo), the hook stays
- * decoupled from the provider and can be used in slots or other contexts
- * that live outside the provider tree.
+ * Observes the current variant's tabs-info query and syncs 401/403 errors
+ * with the AccessErrorProvider. Must be rendered inside both
+ * DashboardConfigProvider and AccessErrorProvider.
  */
 const AccessErrorObserver = () => {
   const { courseId = '' } = useParams<{ courseId: string }>();
-  const { isLoading, error } = useCourseInfo(courseId);
+  const { useTabsInfo } = useDashboardConfig();
+  const { isLoading, error } = useTabsInfo(courseId);
   const { setErrorType, setLoading } = useAccessError();
 
   useEffect(() => {
