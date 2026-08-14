@@ -74,7 +74,7 @@ const routes = [
   ),
   createDashboardRoute(
     'org.openedx.frontend.route.ccxCoach.main',
-    'ccx-coach/:ccxCourseId',
+    'ccx-coach/:courseId',
     m => m.ccxCoachConfig,
   ),
 ];
