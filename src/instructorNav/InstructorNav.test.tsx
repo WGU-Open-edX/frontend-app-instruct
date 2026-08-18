@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import { useCourseInfo } from '@src/data/apiHook';
 import { useAlert } from '@src/providers/AlertProvider';
 import { useWidgetProps } from '../slots/SlotUtils';
+import { DashboardConfigProvider } from '@src/dashboardConfig/DashboardConfigContext';
+import { instructorDashboardConfig } from '@src/dashboardConfig/configs';
 import userEvent from '@testing-library/user-event';
 
 jest.mock('react-router-dom', () => ({
@@ -33,6 +35,12 @@ jest.mock('../slots/SlotUtils', () => ({
 
 const mockClearAlerts = jest.fn();
 
+const renderNav = () => render(
+  <DashboardConfigProvider value={instructorDashboardConfig}>
+    <InstructorNav />
+  </DashboardConfigProvider>
+);
+
 describe('InstructorNav', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -44,7 +52,7 @@ describe('InstructorNav', () => {
     (useCourseInfo as jest.Mock).mockReturnValue({ data: null, isLoading: true });
     (useWidgetProps as jest.Mock).mockReturnValue([]);
 
-    render(<InstructorNav />);
+    renderNav();
     const skeleton = document.querySelector('span[aria-busy="true"]');
     expect(skeleton).toBeInTheDocument();
     expect(skeleton?.firstChild).toHaveClass('react-loading-skeleton lead');
@@ -55,7 +63,7 @@ describe('InstructorNav', () => {
     (useCourseInfo as jest.Mock).mockReturnValue({ data: { tabs: [] }, isLoading: false });
     (useWidgetProps as jest.Mock).mockReturnValue([]);
 
-    const { container } = render(<InstructorNav />);
+    const { container } = renderNav();
     expect(container.firstChild).toBeNull();
   });
 
@@ -74,7 +82,7 @@ describe('InstructorNav', () => {
       { tabId: 'tab3', url: '/tab3', title: 'Tab 3', sortOrder: 3 },
     ]);
 
-    render(<InstructorNav />);
+    renderNav();
     const tabLinks = screen.getAllByRole('button');
     expect(tabLinks).toHaveLength(4);
     expect(tabLinks[0]).toHaveAttribute('aria-label', 'Toggle navigation');
@@ -95,7 +103,7 @@ describe('InstructorNav', () => {
       { tabId: 'tab6', url: '/tab6', title: 'Tab 6', sortOrder: 6 },
     ]);
 
-    render(<InstructorNav />);
+    renderNav();
     expect(screen.getByText('Tab 6')).toBeInTheDocument();
     expect(screen.queryByText('No ID')).not.toBeInTheDocument();
   });
@@ -112,7 +120,7 @@ describe('InstructorNav', () => {
     });
     (useWidgetProps as jest.Mock).mockReturnValue([]);
 
-    render(<InstructorNav />);
+    renderNav();
     const user = userEvent.setup();
     const tabLink = screen.getByText('Tab 1');
     await user.click(tabLink);
@@ -132,11 +140,26 @@ describe('InstructorNav', () => {
     });
     (useWidgetProps as jest.Mock).mockReturnValue([]);
 
-    render(<InstructorNav />);
+    renderNav();
     waitFor(() => {
       const tab2Link = screen.getByText('Tab 2');
       expect(tab2Link.closest('a')).toHaveAttribute('aria-current', 'page');
     });
+  });
+
+  it('throws a descriptive error when rendered without DashboardConfigProvider', () => {
+    (useParams as jest.Mock).mockReturnValue({ courseId: 'course-v1:edX+DemoX+Demo_Course' });
+    (useCourseInfo as jest.Mock).mockReturnValue({ data: null, isLoading: true });
+    (useWidgetProps as jest.Mock).mockReturnValue([]);
+
+    // Silence expected React error boundary logging for this render.
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    expect(() => render(<InstructorNav />)).toThrow(
+      'useDashboardConfig must be used within a DashboardConfigProvider'
+    );
+
+    consoleErrorSpy.mockRestore();
   });
 
   describe('Simplified navigation type detection', () => {
@@ -158,7 +181,7 @@ describe('InstructorNav', () => {
         { tabId: 'tab4', url: '/admin/dashboard', title: 'Admin', sortOrder: 4 },
       ]);
 
-      render(<InstructorNav />);
+      renderNav();
 
       const courseInfoLink = screen.getByText('Course Info');
       const coursewareLink = screen.getByText('Courseware');
@@ -187,7 +210,7 @@ describe('InstructorNav', () => {
         { tabId: 'tab4', url: 'mailto:support@edx.org', title: 'Contact', sortOrder: 4 },
       ]);
 
-      render(<InstructorNav />);
+      renderNav();
 
       const externalLink = screen.getByText('External Courses');
       const learningLink = screen.getByText('Learning');
@@ -216,7 +239,7 @@ describe('InstructorNav', () => {
         { tabId: 'tab4', url: 'https://example.com', title: 'Absolute External', sortOrder: 4 },
       ]);
 
-      render(<InstructorNav />);
+      renderNav();
 
       const internalLink = screen.getByText('Internal');
       const externalLink = screen.getByText('External');
@@ -242,7 +265,7 @@ describe('InstructorNav', () => {
         { tabId: 'tab2', url: 'external', title: 'External Tab', sortOrder: 2 },
       ]);
 
-      render(<InstructorNav />);
+      renderNav();
       const user = userEvent.setup();
 
       const internalTab = screen.getByText('Internal Tab');

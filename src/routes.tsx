@@ -1,40 +1,19 @@
 import { useParams, Navigate } from 'react-router-dom';
-import CohortsPage from '@src/cohorts/CohortsPage';
-import CourseInfoPage from '@src/courseInfo/CourseInfoPage';
-import CertificatesPage from '@src/certificates/CertificatesPage';
-import CourseTeamPage from '@src/courseTeam/CourseTeamPage';
-import DataDownloadsPage from '@src/dataDownloads/DataDownloadsPage';
-import DateExtensionsPage from '@src/dateExtensions/DateExtensionsPage';
-import EnrollmentsPage from '@src/enrollments/EnrollmentsPage';
-import GradingPage from '@src/grading/GradingPage';
-import OpenResponsesPage from '@src/openResponses/OpenResponsesPage';
-import SpecialExamsPage from '@src/specialExams/SpecialExamsPage';
 import PageNotFound from '@src/components/PageNotFound';
 import { useWidgetProps } from './slots/SlotUtils';
 import { instructorDashboardRole } from './constants';
+import {
+  DashboardConfig,
+  DashboardConfigProvider,
+  DashboardRouteProps,
+  useDashboardConfig,
+} from './dashboardConfig/DashboardConfigContext';
 import { authenticatedLoader } from '@openedx/frontend-base';
-
-interface InstructorRouteProps {
-  tabId: string,
-  content: React.ReactNode,
-}
-
-const defaultTabs: InstructorRouteProps[] = [
-  { tabId: 'course_info', content: <CourseInfoPage /> },
-  { tabId: 'enrollments', content: <EnrollmentsPage /> },
-  { tabId: 'course_team', content: <CourseTeamPage /> },
-  { tabId: 'cohorts', content: <CohortsPage /> },
-  { tabId: 'date_extensions', content: <DateExtensionsPage /> },
-  { tabId: 'grading', content: <GradingPage /> },
-  { tabId: 'data_downloads', content: <DataDownloadsPage /> },
-  { tabId: 'special_exams', content: <SpecialExamsPage /> },
-  { tabId: 'certificates', content: <CertificatesPage /> },
-  { tabId: 'open_responses', content: <OpenResponsesPage /> },
-];
 
 const TabContent = () => {
   const { tabId } = useParams<{ tabId: string }>();
-  const routeWidgets = useWidgetProps('org.openedx.frontend.slot.instructorDashboard.routes.v1') as InstructorRouteProps[];
+  const { defaultTabs, routesSlotId } = useDashboardConfig();
+  const routeWidgets = useWidgetProps(routesSlotId) as DashboardRouteProps[];
 
   const tabRoutes = [
     ...defaultTabs.filter(
@@ -48,29 +27,56 @@ const TabContent = () => {
   return foundTab ? foundTab.content : <PageNotFound />;
 };
 
+const DefaultTabRedirect = () => {
+  const { defaultLandingTabId } = useDashboardConfig();
+  return <Navigate to={defaultLandingTabId} replace />;
+};
+
+const buildDashboardComponent = (Main: React.ComponentType, config: DashboardConfig) => {
+  const DashboardRoot = () => (
+    <DashboardConfigProvider value={config}>
+      <Main />
+    </DashboardConfigProvider>
+  );
+  DashboardRoot.displayName = `DashboardRoot(${config.variantId})`;
+  return DashboardRoot;
+};
+
+type ConfigsModule = typeof import('./dashboardConfig/configs');
+
+const createDashboardRoute = (
+  id: string,
+  path: string,
+  getConfig: (configs: ConfigsModule) => DashboardConfig,
+) => ({
+  id,
+  path,
+  loader: authenticatedLoader,
+  handle: { roles: [instructorDashboardRole] },
+  async lazy() {
+    const [{ default: Main }, configs] = await Promise.all([
+      import('./Main'),
+      import('./dashboardConfig/configs'),
+    ]);
+    return { Component: buildDashboardComponent(Main, getConfig(configs)) };
+  },
+  children: [
+    { index: true, element: <DefaultTabRedirect /> },
+    { path: ':tabId', element: <TabContent /> },
+  ],
+});
+
 const routes = [
-  {
-    id: 'org.openedx.frontend.route.instructorDashboard.main',
-    path: 'instructor-dashboard/:courseId',
-    loader: authenticatedLoader,
-    handle: {
-      roles: [instructorDashboardRole]
-    },
-    async lazy() {
-      const module = await import(/* webpackChunkName: "instructor-dashboard-main" */ './Main');
-      return { Component: module.default };
-    },
-    children: [
-      {
-        index: true,
-        element: <Navigate to="course_info" replace />
-      },
-      {
-        path: ':tabId',
-        element: <TabContent />
-      },
-    ]
-  }
+  createDashboardRoute(
+    'org.openedx.frontend.route.instructorDashboard.main',
+    'instructor-dashboard/:courseId',
+    m => m.instructorDashboardConfig,
+  ),
+  createDashboardRoute(
+    'org.openedx.frontend.route.ccxCoach.main',
+    'ccx-coach/:courseId',
+    m => m.ccxCoachConfig,
+  ),
 ];
 
 export default routes;

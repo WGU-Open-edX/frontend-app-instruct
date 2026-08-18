@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Nav, Navbar, Skeleton } from '@openedx/paragon';
-import { useCourseInfo } from '@src/data/apiHook';
 import { useAlert } from '@src/providers/AlertProvider';
 import { useAccessError } from '@src/providers/AccessErrorProvider';
 import { useWidgetProps } from '@src/slots/SlotUtils';
+import { useDashboardConfig } from '@src/dashboardConfig/DashboardConfigContext';
 
 export interface TabProps {
   tabId: string,
@@ -15,8 +15,9 @@ export interface TabProps {
 
 const InstructorNav = () => {
   const { courseId = '', tabId = '' } = useParams<{ courseId: string, tabId?: string }>();
-  const { data: courseInfo, isLoading } = useCourseInfo(courseId);
-  const widgetPropsArray = useWidgetProps('org.openedx.frontend.slot.instructorDashboard.tabs.v1') as TabProps[];
+  const { useTabsInfo, navTabsSlotId } = useDashboardConfig();
+  const { data: courseInfo, isLoading } = useTabsInfo(courseId);
+  const widgetPropsArray = useWidgetProps(navTabsSlotId) as TabProps[];
   const { clearAlerts } = useAlert();
   const { clearError, errorType } = useAccessError();
 
