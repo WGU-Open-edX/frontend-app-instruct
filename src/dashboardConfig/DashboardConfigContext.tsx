@@ -43,9 +43,9 @@ export const DashboardConfigProvider = ({ value, children }: DashboardConfigProv
 );
 
 export const useDashboardConfig = (): DashboardConfig => {
-  const ctx = useContext(DashboardConfigContext);
-  if (!ctx) {
+  const config = useContext(DashboardConfigContext);
+  if (!config) {
     throw new Error('useDashboardConfig must be used within a DashboardConfigProvider');
   }
-  return ctx;
+  return config;
 };

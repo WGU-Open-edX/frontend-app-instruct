@@ -7,7 +7,7 @@ const messages = defineMessages({
     description: 'Document title for the instructor dashboard page',
   },
   ccxCoachPageTitle: {
-    id: 'dashboard.ccx-coach.page.title',
+    id: 'dashboard.ccxCoach.page.title',
     defaultMessage: 'CCX Coach Dashboard | {siteName}',
     description: 'Document title for the CCX coach dashboard page',
   },
